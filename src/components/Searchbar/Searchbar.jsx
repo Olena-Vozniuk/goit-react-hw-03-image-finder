@@ -1,34 +1,45 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik } from 'formik';
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
+import {
+    SearchbarHeader,
+    SearchForm,
+    SearchFormButton,
+    SearchFormButtonLabel,
+    SearchFormInput
+} from './Searchbar.styled'
 
 export const Searchbar = ({ onSubmit }) => {
     const handleSubmit = (values) => {
         if (!values.values.trim()) {
             return toast.error('Please, enter request');
         }
-    onSubmit(values.values)
-}
+        onSubmit(values.values);  
+    }
+    
     return (
+        <SearchbarHeader>
         <Formik
             initialValues={{
                 values: '',
             }}
             onSubmit={handleSubmit}
+
         >
-            <Form>
-                <button type="submit">
-                    <span className='button-label'>Search</span>
-                </button>
-                <Field className="input"
+            <SearchForm>
+                <SearchFormButton type="submit">
+                    <SearchFormButtonLabel></SearchFormButtonLabel>
+                </SearchFormButton>
+                <SearchFormInput className="input"
                     name="values"
                     type="text"
                     autoComplete="off"
                     autoFocus
                     placeholder="Search images and photos">
-                </Field>
-            </Form>
-        </Formik>
+                </SearchFormInput>
+            </SearchForm>
+            </Formik>
+        </SearchbarHeader>
     )
 }
 

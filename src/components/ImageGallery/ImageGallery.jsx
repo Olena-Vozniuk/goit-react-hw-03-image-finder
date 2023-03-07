@@ -4,7 +4,9 @@ import { getImages } from "components/Services/api";
 import { ImageGalleryItem } from "../ImageGalleryItem/ImageGalleryItem";
 import { Loader } from "components/Loader/Loader";
 import { Button } from "components/Button/Button";
-import { Modal } from "components/Modal/Modal";
+import { ImageGalleryList } from './ImageGallery.styled';
+
+
 
 export class ImageGallery extends Component {
     state = {
@@ -16,16 +18,19 @@ export class ImageGallery extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.value !== this.props.value ||
-            prevState.page !== this.state.page) {
+        const { value } = this.props;
+        const { page } = this.state;
+
+        if (prevProps.value !== value ||
+            prevState.page !== page) {
             this.setState({ loading: true })
             
-            getImages(this.props.value.trim(), this.state.page)
+            getImages(value.trim(), page)
                 .then(response => response.json())
                 .then(images => {
                     if (images.totalHits === 0) {
                         return Promise.reject(
-                            new Error('Something went wrong'))
+                            new Error('something is wrong!'))
                     }
                     console.log('images >>>', images);
                     this.setState({
@@ -35,7 +40,8 @@ export class ImageGallery extends Component {
                     console.log(error);
                     this.setState({ error })
                 }).finally(() => {
-                    this.setState({ loading: false })
+                    this.setState({
+                        loading: false})
                 })
         }
     }
@@ -48,28 +54,24 @@ export class ImageGallery extends Component {
     this.setState(({ showModal }) => ({
       showModal: !showModal,
     }));
-    
 
     render() {
-        const { error, loading, images, showModal } = this.state;
-        const { tags, largeImageURL } = this.props;
+        const { error, loading, images } = this.state;
 
         return (
             <> {error && <p>No results</p>}
                 {loading && <Loader />}
                 {images[0] &&
-                    <>
-                    <ul className="gallery">
-                        <ImageGalleryItem images={images} onClick={this.toggleModal}/>
-                    </ul> 
+                <>
+                    <ImageGalleryList className="gallery">
+                        {images.map(({ id, ...otherProps }) => (
+                            <ImageGalleryItem key={id} {...otherProps} />
+                            ))}
+                    </ImageGalleryList> 
                     <Button onClick={this.handleLoad} />
-            </>        
+                    
+                </>        
                 }
-                {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <img src={largeImageURL} alt={tags} />
-          </Modal>
-        )}
             </>
         )
     }
