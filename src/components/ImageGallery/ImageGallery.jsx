@@ -2,28 +2,76 @@ import { Component } from "react";
 import PropTypes from 'prop-types';
 import { getImages } from "components/Services/api";
 import { ImageGalleryItem } from "../ImageGalleryItem/ImageGalleryItem";
+import { Loader } from "components/Loader/Loader";
+import { Button } from "components/Button/Button";
+import { Modal } from "components/Modal/Modal";
 
 export class ImageGallery extends Component {
     state = {
-        images: null,
+        images: [],
+        loading: false,
+        error: '',
+        page: 1,
+        showModal: false,
     }
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.value !== this.props.value) {
-            getImages(this.props.value)
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.value !== this.props.value ||
+            prevState.page !== this.state.page) {
+            this.setState({ loading: true })
+            
+            getImages(this.props.value.trim(), this.state.page)
                 .then(response => response.json())
                 .then(images => {
-                    this.setState({ images })
+                    if (images.totalHits === 0) {
+                        return Promise.reject(
+                            new Error('Something went wrong'))
+                    }
+                    console.log('images >>>', images);
+                    this.setState({
+                        images: [...this.state.images, ...images.hits]     
+                    })
+                }).catch(error => {
+                    console.log(error);
+                    this.setState({ error })
+                }).finally(() => {
+                    this.setState({ loading: false })
                 })
         }
-        console.log('Пропси в галереї:', this.props.value);
-        console.log('State галереї:', this.state.images);
     }
 
+    handleLoad = () => {
+        this.setState((prev) => ({ page: prev.page + 1 }))
+    }
+
+    toggleModal = () =>
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+    
+
     render() {
-        return this.state.images && <ul className="gallery">
-                <ImageGalleryItem images={this.state.images.hits} />
-            </ul>    
+        const { error, loading, images, showModal } = this.state;
+        const { tags, largeImageURL } = this.props;
+
+        return (
+            <> {error && <p>No results</p>}
+                {loading && <Loader />}
+                {images[0] &&
+                    <>
+                    <ul className="gallery">
+                        <ImageGalleryItem images={images} onClick={this.toggleModal}/>
+                    </ul> 
+                    <Button onClick={this.handleLoad} />
+            </>        
+                }
+                {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <img src={largeImageURL} alt={tags} />
+          </Modal>
+        )}
+            </>
+        )
     }
 };
 

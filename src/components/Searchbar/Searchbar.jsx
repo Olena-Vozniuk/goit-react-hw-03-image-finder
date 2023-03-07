@@ -1,10 +1,13 @@
 import { Formik, Form, Field } from 'formik';
+import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
 export const Searchbar = ({ onSubmit }) => {
     const handleSubmit = (values) => {
-    console.log('Значення інпуту:', values);
-    onSubmit(values)
+        if (!values.values.trim()) {
+            return toast.error('Please, enter request');
+        }
+    onSubmit(values.values)
 }
     return (
         <Formik
