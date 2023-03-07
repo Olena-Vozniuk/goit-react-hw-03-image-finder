@@ -1,5 +1,6 @@
 import { Formik } from 'formik';
 import toast from 'react-hot-toast';
+import { FaSearch } from "react-icons/fa";
 import PropTypes from 'prop-types';
 import {
     SearchbarHeader,
@@ -9,26 +10,30 @@ import {
     SearchFormInput
 } from './Searchbar.styled'
 
-export const Searchbar = ({ onSubmit }) => {
-    const handleSubmit = (values) => {
-        if (!values.values.trim()) {
-            return toast.error('Please, enter request');
-        }
-        onSubmit(values.values);  
-    }
-    
+export const Searchbar = ({ onSubmit  }) => {
+
     return (
         <SearchbarHeader>
         <Formik
-            initialValues={{
-                values: '',
-            }}
-            onSubmit={handleSubmit}
+                initialValues={{
+                    values: '',
+                }}
+                onSubmit={(values, actions) => {
+                    if (!values.values.trim()) {
+                        return toast.error('Please, enter request');
+                    }
+                    
+                    
+                    onSubmit(values.values)
+                        actions.resetForm();
+                }}
 
         >
             <SearchForm>
                 <SearchFormButton type="submit">
-                    <SearchFormButtonLabel></SearchFormButtonLabel>
+                        <SearchFormButtonLabel>
+                            <FaSearch/>
+                        </SearchFormButtonLabel>
                 </SearchFormButton>
                 <SearchFormInput className="input"
                     name="values"

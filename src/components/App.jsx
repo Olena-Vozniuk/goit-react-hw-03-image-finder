@@ -8,13 +8,13 @@ import { Searchbar } from './Searchbar/Searchbar';
 
 export class App extends Component{
   state = {
-  values: '',
+    values: '',
+    page: 1,
 }
 
   getImages = values => {
     this.setState({ values })
   }
-
 
   render() {
     return (

@@ -15,20 +15,18 @@ export class ImageGallery extends Component {
         error: '',
         page: 1,
         showModal: false,
+        showLoadButton: false,
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { value } = this.props;
-        const { page } = this.state;
-
-        if (prevProps.value !== value ||
-            prevState.page !== page) {
-            this.setState({ loading: true })
+        if (prevProps.value !== this.props.value ||
+            prevState.page !== this.state.page ) {
+            this.setState({ loading: true, showLoadButton: true })
             
-            getImages(value.trim(), page)
+            getImages(this.props.value.trim(), this.state.page)
                 .then(response => response.json())
                 .then(images => {
-                    if (images.totalHits === 0) {
+                    if (images.totalHits === 0 ) {
                         return Promise.reject(
                             new Error('something is wrong!'))
                     }
@@ -37,13 +35,15 @@ export class ImageGallery extends Component {
                         images: [...this.state.images, ...images.hits]     
                     })
                 }).catch(error => {
-                    console.log(error);
                     this.setState({ error })
                 }).finally(() => {
                     this.setState({
-                        loading: false})
+                        loading: false,
+                    })
                 })
+            this.setState({error: ''})
         }
+        
     }
 
     handleLoad = () => {
@@ -56,10 +56,10 @@ export class ImageGallery extends Component {
     }));
 
     render() {
-        const { error, loading, images } = this.state;
+        const { error, loading, images, showLoadButton } = this.state;
 
         return (
-            <> {error && <p>No results</p>}
+            <> {error && <p align="center">No results</p>}
                 {loading && <Loader />}
                 {images[0] &&
                 <>
@@ -68,7 +68,7 @@ export class ImageGallery extends Component {
                             <ImageGalleryItem key={id} {...otherProps} />
                             ))}
                     </ImageGalleryList> 
-                    <Button onClick={this.handleLoad} />
+                    {showLoadButton && <Button onClick={this.handleLoad} />}
                     
                 </>        
                 }
