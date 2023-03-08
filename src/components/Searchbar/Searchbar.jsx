@@ -10,22 +10,21 @@ import {
     SearchFormInput
 } from './Searchbar.styled'
 
-export const Searchbar = ({ onSubmit  }) => {
+export const Searchbar = ({ onSubmit }) => {
 
     return (
         <SearchbarHeader>
         <Formik
                 initialValues={{
-                    values: '',
+                    value: '',
                 }}
-                onSubmit={(values, actions) => {
-                    if (!values.values.trim()) {
+                onSubmit={(value, actions) => {
+                    if (!value.value.trim()) {
                         return toast.error('Please, enter request');
                     }
                     
-                    
-                    onSubmit(values.values)
-                        actions.resetForm();
+                    onSubmit(value.value);
+                    actions.resetForm();
                 }}
 
         >
@@ -36,7 +35,7 @@ export const Searchbar = ({ onSubmit  }) => {
                         </SearchFormButtonLabel>
                 </SearchFormButton>
                 <SearchFormInput className="input"
-                    name="values"
+                    name="value"
                     type="text"
                     autoComplete="off"
                     autoFocus
