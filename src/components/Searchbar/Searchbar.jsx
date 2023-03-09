@@ -6,7 +6,7 @@ import {
     SearchbarHeader,
     SearchForm,
     SearchFormButton,
-    SearchFormButtonLabel,
+    
     SearchFormInput
 } from './Searchbar.styled'
 
@@ -29,10 +29,8 @@ export const Searchbar = ({ onSubmit }) => {
 
         >
             <SearchForm>
-                <SearchFormButton type="submit">
-                        <SearchFormButtonLabel>
+                <SearchFormButton type="submit">                     
                             <FaSearch/>
-                        </SearchFormButtonLabel>
                 </SearchFormButton>
                 <SearchFormInput className="input"
                     name="value"

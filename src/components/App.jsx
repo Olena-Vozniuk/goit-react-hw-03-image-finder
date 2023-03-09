@@ -83,7 +83,7 @@ export class App extends Component{
           toastOptions={{
             duration: 1000,}} />
         <Searchbar  onSubmit={this.submitForm}  />
-        <ImageGallery images={images} {...this.props.otherProps} />
+        <ImageGallery images={images} />
         {error && <p align="center">Sorry, no results for "{value}"</p>}
         {loading && <Loader />}
         {!error && images[0] && <Button onClick={this.handleLoad} />}
